@@ -318,7 +318,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   await user.save();
   console.log(req.get("host"));
-  const resetPasswordUrl = `http://localhost:3000/password/reset/${resetPasswordToken}`;
+  const resetPasswordUrl = `https://my-social-media-app-lac.vercel.app/password/reset/${resetPasswordToken}`;
 
   try {
     await sendEmail({
