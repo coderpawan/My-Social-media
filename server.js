@@ -1,15 +1,24 @@
-const app = require("./app");
-const connectDatabase = require("./config/database");
-const cloudinary = require("cloudinary");
+const path = require("path");
+const express = require("express");
+const app = require("./backend/app");
+const connectDatabase = require("./backend/config/database");
 const PORT = process.env.PORT || 4000;
 
 connectDatabase();
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// deployment
+__dirname = path.resolve();
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/build")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.send("Server is Running! 🚀");
+  });
+}
 
 const server = app.listen(PORT, () => {
   console.log(`Server Running on http://localhost:${PORT}`);
@@ -77,45 +86,5 @@ io.on("connection", (socket) => {
     removeUser(socket.id);
     io.emit("getUsers", users);
     // console.log(users);
-<<<<<<< HEAD
   });
-=======
-
-    // get userId and socketId from client
-    socket.on("addUser", (userId) => {
-        addUser(userId, socket.id);
-        io.emit("getUsers", users);
-    });
-
-    // get and send message
-    socket.on("sendMessage", ({ senderId, receiverId, content }) => {
-
-        const user = getUser(receiverId);
-
-        io.to(user?.socketId).emit("getMessage", {
-            senderId,
-            content,
-        });
-    });
-
-    // typing states
-    socket.on("typing", ({ senderId, receiverId }) => {
-        const user = getUser(receiverId);
-        console.log(user)
-        io.to(user?.socketId).emit("typing", senderId);
-    });
-
-    socket.on("typing stop", ({ senderId, receiverId }) => {
-        const user = getUser(receiverId);
-        io.to(user?.socketId).emit("typing stop", senderId);
-    });
-
-    // user disconnected
-    socket.on("disconnect", () => {
-        console.log("⚠️ Someone disconnected")
-        removeUser(socket.id);
-        io.emit("getUsers", users);
-        // console.log(users);
-    });
->>>>>>> 9260cfb77ef1d8d8500d6ced4568a0aa24eded24
 });
