@@ -1,10 +1,34 @@
 const path = require("path");
 const express = require("express");
 const app = require("./backend/app");
-const connectDatabase = require("./backend/config/database");
+require("dotenv").config();
+const mongoose = require("mongoose");
 const PORT = process.env.PORT || 4000;
+const multer = require("multer");
+const cloudinary = require("cloudinary");
 
-connectDatabase();
+const mongodbUri = process.env.MONGO_URI;
+
+mongoose
+  .connect(mongodbUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Mongoose Connected");
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // deployment
 __dirname = path.resolve();
@@ -29,7 +53,7 @@ const server = app.listen(PORT, () => {
 const io = require("socket.io")(server, {
   // pingTimeout: 60000,
   cors: {
-    origin: "https://my-social-media-app-lac.vercel.app/",
+    origin: "http://localhost:3000",
   },
 });
 

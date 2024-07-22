@@ -6,13 +6,12 @@ const sendEmail = async (options) => {
     port: 465,
     secure: true,
     auth: {
-      user: "pawan9749568594@gmail.com",
+      user: "pawan.kumarsahu.civ20@itbhu.ac.in",
       pass: "Pawan@2002",
     },
   });
-  console.log(options.email, options.data.reset_url);
   const info = await transporter.sendMail({
-    from: "pawan9749568594@gmail.com",
+    from: "pawan.kumarsahu.civ20@itbhu.ac.in",
     to: `${options.email}`,
     subject: "Reset your password",
     text: `this is your reset link. Please click it to reset your password ${options.data.reset_url}`, // plain text body

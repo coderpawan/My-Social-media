@@ -16,10 +16,11 @@ const {
   deleteProfile,
 } = require("../controllers/userController");
 const { isAuthenticated } = require("../middlewares/auth");
+const upload = require("../middlewares/upload");
 
 const router = express();
 
-router.route("/signup").post(signupUser);
+router.route("/signup").post(upload.single("avatar"), signupUser);
 router.route("/login").post(loginUser);
 router.route("/logout").get(logoutUser);
 
@@ -36,7 +37,9 @@ router.route("/users").get(isAuthenticated, searchUsers);
 
 router.route("/follow/:id").get(isAuthenticated, followUser);
 
-router.route("/update/profile").put(isAuthenticated, updateProfile);
+router
+  .route("/update/profile")
+  .put(isAuthenticated, upload.single("avatar"), updateProfile);
 router.route("/update/password").put(isAuthenticated, updatePassword);
 
 router.route("/password/forgot").post(forgotPassword);

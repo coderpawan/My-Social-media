@@ -9,7 +9,15 @@ const cloudinary = require("cloudinary");
 
 // Signup User
 exports.signupUser = catchAsync(async (req, res, next) => {
-  const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+  const { file } = req;
+
+  if (!file) {
+    return res.status(400).json({
+      success: false,
+      message: "No file uploaded",
+    });
+  }
+  const myCloud = await cloudinary.v2.uploader.upload(file.path, {
     folder: "instagram/avatars",
     width: 150,
     crop: "scale",
@@ -179,6 +187,14 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
 // Update Profile
 exports.updateProfile = catchAsync(async (req, res, next) => {
+  const { file } = req;
+
+  if (!file) {
+    return res.status(400).json({
+      success: false,
+      message: "No file uploaded",
+    });
+  }
   const { name, username, website, bio, email } = req.body;
 
   const newUserData = {
@@ -196,14 +212,14 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler("User Already Exists", 404));
   }
 
-  if (req.body.avatar !== "") {
+  if (file) {
     const user = await User.findById(req.user._id);
 
     const imageId = user.avatar.public_id;
 
     await cloudinary.v2.uploader.destroy(imageId);
 
-    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+    const myCloud = await cloudinary.v2.uploader.upload(file.path, {
       folder: "instagram/avatars",
       width: 150,
       crop: "scale",
@@ -317,8 +333,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetPasswordToken = await user.getResetPasswordToken();
 
   await user.save();
-  console.log(req.get("host"));
-  const resetPasswordUrl = `https://my-social-media-app-lac.vercel.app/password/reset/${resetPasswordToken}`;
+  const resetPasswordUrl = `http://${req.get(
+    "host"
+  )}/password/reset/${resetPasswordToken}`;
 
   try {
     await sendEmail({
