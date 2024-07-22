@@ -2,7 +2,8 @@ const Post = require("../models/postModel");
 const User = require("../models/userModel");
 const catchAsync = require("../middlewares/catchAsync");
 const ErrorHandler = require("../utils/errorHandler");
-const cloudinary = require("cloudinary");
+const cloudinary = require("cloudinary").v2;
+const streamifier = require("streamifier");
 
 // Create New Post
 exports.newPost = catchAsync(async (req, res, next) => {
@@ -15,15 +16,31 @@ exports.newPost = catchAsync(async (req, res, next) => {
       message: "No file uploaded",
     });
   }
-  const myCloud = await cloudinary.v2.uploader.upload(file.path, {
-    folder: "instagram/posts",
-  });
+
+  const uploadStream = (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "instagram/posts",
+        },
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
+        }
+      );
+      streamifier.createReadStream(fileBuffer).pipe(stream);
+    });
+  };
+
+  const result = await uploadStream(file.buffer);
 
   const postData = {
-    caption: req.body.caption,
+    caption,
     image: {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
+      public_id: result.public_id,
+      url: result.secure_url,
     },
     postedBy: req.user._id,
   };

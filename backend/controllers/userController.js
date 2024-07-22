@@ -5,7 +5,8 @@ const sendCookie = require("../utils/sendCookie");
 const ErrorHandler = require("../utils/errorHandler");
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
-const cloudinary = require("cloudinary");
+const cloudinary = require("cloudinary").v2;
+const streamifier = require("streamifier");
 
 // Signup User
 exports.signupUser = catchAsync(async (req, res, next) => {
@@ -17,11 +18,27 @@ exports.signupUser = catchAsync(async (req, res, next) => {
       message: "No file uploaded",
     });
   }
-  const myCloud = await cloudinary.v2.uploader.upload(file.path, {
-    folder: "instagram/avatars",
-    width: 150,
-    crop: "scale",
-  });
+
+  const uploadStream = (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "instagram/avatars",
+          width: 150,
+          crop: "scale",
+        },
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
+        }
+      );
+      streamifier.createReadStream(fileBuffer).pipe(stream);
+    });
+  };
+
+  const result = await uploadStream(file.buffer);
 
   const { name, email, username, password } = req.body;
 
@@ -41,8 +58,8 @@ exports.signupUser = catchAsync(async (req, res, next) => {
     username,
     password,
     avatar: {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
+      public_id: result.public_id,
+      url: result.secure_url,
     },
   });
 
@@ -195,6 +212,28 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
       message: "No file uploaded",
     });
   }
+
+  const uploadStream = (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "instagram/avatars",
+          width: 150,
+          crop: "scale",
+        },
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
+        }
+      );
+      streamifier.createReadStream(fileBuffer).pipe(stream);
+    });
+  };
+
+  const result = await uploadStream(file.buffer);
+
   const { name, username, website, bio, email } = req.body;
 
   const newUserData = {
@@ -203,38 +242,29 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
     website,
     bio,
     email,
+    avatar: {
+      public_id: result.public_id,
+      url: result.secure_url,
+    },
   };
 
   const userExists = await User.findOne({
     $or: [{ email }, { username }],
   });
+
   if (userExists && userExists._id.toString() !== req.user._id.toString()) {
     return next(new ErrorHandler("User Already Exists", 404));
   }
 
-  if (file) {
-    const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id);
 
-    const imageId = user.avatar.public_id;
-
-    await cloudinary.v2.uploader.destroy(imageId);
-
-    const myCloud = await cloudinary.v2.uploader.upload(file.path, {
-      folder: "instagram/avatars",
-      width: 150,
-      crop: "scale",
-    });
-
-    newUserData.avatar = {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
-    };
+  if (user.avatar && user.avatar.public_id) {
+    await cloudinary.uploader.destroy(user.avatar.public_id);
   }
 
   await User.findByIdAndUpdate(req.user._id, newUserData, {
     new: true,
     runValidators: true,
-    useFindAndModify: true,
   });
 
   res.status(200).json({
