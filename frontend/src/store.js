@@ -23,6 +23,19 @@ import {
   allMessagesReducer,
   newMessageReducer,
 } from "./reducers/messageReducer";
+import {
+  storyFeedReducer,
+  userStoriesReducer,
+  archivedStoriesReducer,
+  newStoryReducer,
+  storyActionsReducer,
+  deleteStoryReducer,
+  userHighlightsReducer,
+  highlightStoriesReducer,
+  newHighlightReducer,
+  deleteHighlightReducer,
+  updateHighlightReducer,
+} from "./reducers/storyReducer";
 
 const reducer = combineReducers({
   user: userReducer,
@@ -42,6 +55,18 @@ const reducer = combineReducers({
   allMessages: allMessagesReducer,
   newMessage: newMessageReducer,
   newChat: newChatReducer,
+  // Story reducers
+  storyFeed: storyFeedReducer,
+  userStories: userStoriesReducer,
+  archivedStories: archivedStoriesReducer,
+  newStory: newStoryReducer,
+  storyActions: storyActionsReducer,
+  deleteStory: deleteStoryReducer,
+  userHighlights: userHighlightsReducer,
+  highlightStories: highlightStoriesReducer,
+  newHighlight: newHighlightReducer,
+  deleteHighlight: deleteHighlightReducer,
+  updateHighlight: updateHighlightReducer,
 });
 
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));

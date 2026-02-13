@@ -5,7 +5,7 @@ import { clearErrors, getPostsOfFollowing } from '../../actions/postAction'
 import { LIKE_UNLIKE_POST_RESET, NEW_COMMENT_RESET, POST_FOLLOWING_RESET, SAVE_UNSAVE_POST_RESET } from '../../constants/postConstants'
 import UsersDialog from '../Layouts/UsersDialog'
 import PostItem from './PostItem'
-import StoriesContainer from './StoriesContainer'
+import { StoryBar } from '../Stories'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import SpinLoader from '../Layouts/SpinLoader'
 import SkeletonPost from '../Layouts/SkeletonPost'
@@ -70,7 +70,7 @@ const PostsContainer = () => {
         <>
             <div className="flex flex-col w-full lg:w-2/3 sm:mt-6 sm:px-8 mb-8">
 
-                <StoriesContainer />
+                <StoryBar />
 
                 {loading &&
                     Array(5).fill("").map((el, i) => (<SkeletonPost key={i} />))

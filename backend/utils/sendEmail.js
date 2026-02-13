@@ -6,12 +6,12 @@ const sendEmail = async (options) => {
     port: 465,
     secure: true,
     auth: {
-      user: "pawan.kumarsahu.civ20@itbhu.ac.in",
-      pass: "Pawan@2002",
+      user: process.env.SMTP_EMAIL,
+      pass: process.env.SMTP_PASSWORD,  // Use Gmail App Password, not regular password
     },
   });
   const info = await transporter.sendMail({
-    from: "pawan.kumarsahu.civ20@itbhu.ac.in",
+    from: process.env.SMTP_EMAIL,
     to: `${options.email}`,
     subject: "Reset your password",
     text: `this is your reset link. Please click it to reset your password ${options.data.reset_url}`, // plain text body

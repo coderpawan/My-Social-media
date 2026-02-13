@@ -1,6 +1,6 @@
 const path = require("path");
 const express = require("express");
-const app = require("./backend/app");
+const app = require("./app");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const PORT = process.env.PORT || 4000;
@@ -33,10 +33,10 @@ const upload = multer({ storage: storage });
 // deployment
 __dirname = path.resolve();
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "/frontend/build")));
+  app.use(express.static(path.join(__dirname, "../frontend/build")));
 
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+    res.sendFile(path.resolve(__dirname, "../frontend", "build", "index.html"));
   });
 } else {
   app.get("/", (req, res) => {

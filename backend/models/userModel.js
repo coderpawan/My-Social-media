@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
@@ -63,6 +63,28 @@ const userSchema = new mongoose.Schema({
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
+        }
+    ],
+    highlights: [
+        {
+            title: {
+                type: String,
+                required: true,
+                trim: true,
+                maxlength: 50
+            },
+            coverImage: {
+                public_id: String,
+                url: String
+            },
+            stories: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Story"
+            }],
+            createdAt: {
+                type: Date,
+                default: Date.now
+            }
         }
     ],
     resetPasswordToken: String,

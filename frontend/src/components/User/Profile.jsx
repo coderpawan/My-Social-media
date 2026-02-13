@@ -12,6 +12,7 @@ import UsersDialog from '../Layouts/UsersDialog';
 import { NEW_CHAT_RESET } from '../../constants/chatConstants';
 import MetaData from '../Layouts/MetaData';
 import NotFound from '../Errors/NotFound';
+import { HighlightSection } from '../Stories';
 
 const Profile = () => {
 
@@ -157,6 +158,11 @@ const Profile = () => {
                         :
                         <UsersDialog title="Following" open={viewModal} onClose={closeModal} usersList={user?.following} />
                     }
+
+                    {/* Highlights Section */}
+                    <div className="sm:ml-8 sm:mr-14 border-b">
+                        <HighlightSection userId={user._id} isOwnProfile={loggedInUser._id === user._id} />
+                    </div>
 
                     <div className="border-t sm:ml-8 sm:mr-14">
 
