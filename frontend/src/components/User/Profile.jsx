@@ -77,7 +77,7 @@ const Profile = () => {
     useEffect(() => {
         // console.log(user?.followers?.some((id) => id === loggedInUser._id))
         setFollow(user?.followers?.some((u) => u._id === loggedInUser._id))
-    }, [user]);
+    }, [user, loggedInUser._id]);
 
     const addToChat = () => {
         dispatch(addNewChat(user._id));
@@ -146,7 +146,7 @@ const Profile = () => {
                                 <p className="font-medium">{user.name}</p>
                                 <p className="whitespace-pre-line">{user.bio}</p>
                                 {user?.website &&
-                                    <a href={user.website} target="_blank" className="text-blue-900 font-medium">{new URL(user.website).hostname}</a>
+                                    <a href={user.website} target="_blank" rel="noreferrer" className="text-blue-900 font-medium">{new URL(user.website).hostname}</a>
                                 }
                             </div>
                         </div>

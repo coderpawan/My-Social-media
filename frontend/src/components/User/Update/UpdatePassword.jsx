@@ -45,7 +45,7 @@ const UpdatePassword = () => {
 
             dispatch({ type: UPDATE_PASSWORD_RESET });
         }
-    }, [dispatch, error, isUpdated, navigate]);
+    }, [dispatch, error, isUpdated, navigate, user?.username]);
 
     return (
         <>

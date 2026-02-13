@@ -7,7 +7,6 @@ import {
   loadUser,
   updateProfile,
 } from "../../../actions/userAction";
-import profile from "../../../assests/images/hero.png";
 import { UPDATE_PROFILE_RESET } from "../../../constants/userConstants";
 import MetaData from "../../Layouts/MetaData";
 
@@ -82,7 +81,7 @@ const UpdateProfile = () => {
 
       dispatch({ type: UPDATE_PROFILE_RESET });
     }
-  }, [dispatch, user, error, isUpdated]);
+}, [dispatch, user, error, isUpdated, navigate, username]);
 
   return (
     <>
