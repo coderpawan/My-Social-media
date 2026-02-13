@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { viewStory, likeUnlikeStory, deleteStory } from "../../actions/storyAction";
 import { Link } from "react-router-dom";
@@ -31,7 +31,7 @@ const StoryViewer = ({
     const progressInterval = useRef(null);
     const videoRef = useRef(null);
 
-    const stories = storyData?.stories || [];
+    const stories = useMemo(() => storyData?.stories || [], [storyData?.stories]);
     const currentStory = stories[currentIndex];
     const storyUser = storyData?.user;
 
@@ -76,6 +76,7 @@ const StoryViewer = ({
                 return prev + increment;
             });
         }, 50);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentIndex, currentStory]);
 
     // Start/stop progress based on pause state
@@ -104,7 +105,7 @@ const StoryViewer = ({
         }
     }, [isPaused, currentStory]);
 
-    const goToNext = () => {
+    const goToNext = useCallback(() => {
         if (currentIndex < stories.length - 1) {
             setCurrentIndex((prev) => prev + 1);
             setProgress(0);
@@ -115,16 +116,16 @@ const StoryViewer = ({
         } else {
             onClose();
         }
-    };
+    }, [currentIndex, stories.length, hasNextUser, onNextUser, onClose]);
 
-    const goToPrev = () => {
+    const goToPrev = useCallback(() => {
         if (currentIndex > 0) {
             setCurrentIndex((prev) => prev - 1);
             setProgress(0);
         } else if (hasPrevUser) {
             onPrevUser();
         }
-    };
+    }, [currentIndex, hasPrevUser, onPrevUser]);
 
     // Handle tap navigation
     const handleTap = (e) => {
@@ -206,7 +207,7 @@ const StoryViewer = ({
 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [currentIndex, stories.length]);
+    }, [goToNext, goToPrev, onClose]);
 
     // Format time ago
     const formatTimeAgo = (date) => {

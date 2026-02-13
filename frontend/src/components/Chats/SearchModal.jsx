@@ -1,6 +1,6 @@
 import Dialog from '@mui/material/Dialog';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { NEW_CHAT_RESET } from '../../constants/chatConstants';
@@ -20,12 +20,12 @@ const NewDialog = ({ open, onClose }) => {
     const { user: self } = useSelector((state) => state.user);
     const { error, chat } = useSelector((state) => state.newChat);
 
-    const fetchUsers = async (term) => {
+    const fetchUsers = useCallback(async (term) => {
         setLoading(true);
         const { data } = await axios.get(`/api/v1/users?keyword=${term}`);
         setUsers(data.users.filter((u) => u._id !== self._id));
         setLoading(false);
-    }
+    }, [self._id]);
 
     useEffect(() => {
         if (searchTerm.trim().length > 0) {
@@ -35,7 +35,7 @@ const NewDialog = ({ open, onClose }) => {
         return () => {
             setUsers([]);
         }
-    }, [searchTerm]);
+    }, [searchTerm, fetchUsers]);
 
     const addToChat = (userId) => {
         dispatch(addNewChat(userId));
@@ -53,7 +53,7 @@ const NewDialog = ({ open, onClose }) => {
             dispatch({ type: NEW_CHAT_RESET });
             onClose();
         }
-    }, [dispatch, error, chat, navigate]);
+    }, [dispatch, error, chat, navigate, self._id, onClose]);
 
     return (
         <Dialog open={open} onClose={onClose}>

@@ -18,10 +18,13 @@ import {
   postOfFollowingReducer,
   savePostReducer,
 } from "./reducers/postReducer";
-import { allChatsReducer, newChatReducer } from "./reducers/chatsReducer";
+import { allChatsReducer, newChatReducer, deleteChatReducer } from "./reducers/chatsReducer";
 import {
   allMessagesReducer,
   newMessageReducer,
+  editMessageReducer,
+  deleteMessageReducer,
+  searchMessagesReducer,
 } from "./reducers/messageReducer";
 import {
   storyFeedReducer,
@@ -55,6 +58,10 @@ const reducer = combineReducers({
   allMessages: allMessagesReducer,
   newMessage: newMessageReducer,
   newChat: newChatReducer,
+  deleteChat: deleteChatReducer,
+  editMessage: editMessageReducer,
+  deleteMessage: deleteMessageReducer,
+  searchMessages: searchMessagesReducer,
   // Story reducers
   storyFeed: storyFeedReducer,
   userStories: userStoriesReducer,

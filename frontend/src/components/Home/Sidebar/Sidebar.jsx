@@ -2,13 +2,10 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getPostsOfFollowing } from "../../../actions/postAction";
 import {
   clearErrors,
   getSuggestedUsers,
-  loadUser,
 } from "../../../actions/userAction";
-import { POST_FOLLOWING_RESET } from "../../../constants/postConstants";
 import { FOLLOW_USER_RESET } from "../../../constants/userConstants";
 import SkeletonUserItem from "../../Layouts/SkeletonUserItem";
 import UserListItem from "./UserListItem";
@@ -44,7 +41,7 @@ const Sidebar = ({ status }) => {
       // dispatch(getPostsOfFollowing());
       dispatch({ type: FOLLOW_USER_RESET });
     }
-  }, [success, followError]);
+  }, [success, followError, dispatch, message]);
 
   return (
     <div
@@ -112,16 +109,16 @@ const Sidebar = ({ status }) => {
                 "Terms",
                 "Locations",
               ].map((el, i) => (
-                <a href="#" key={i}>
+                <span className="cursor-pointer hover:underline" key={i}>
                   {el}
-                </a>
+                </span>
               ))}
             </div>
             <div className="flex items-center space-x-1.5">
               {["Top Accounts", "Hashtags", "Language"].map((el, i) => (
-                <a href="#" key={i}>
+                <span className="cursor-pointer hover:underline" key={i}>
                   {el}
-                </a>
+                </span>
               ))}
             </div>
           </div>

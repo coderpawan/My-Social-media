@@ -1,11 +1,10 @@
-import { Dialog, DialogContent, LinearProgress } from "@mui/material";
+import { Dialog, LinearProgress } from "@mui/material";
 import { Picker } from "emoji-mart";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { addNewPost, clearErrors } from "../../actions/postAction";
-import profile from "../../assests/images/hero.png";
 import { NEW_POST_RESET } from "../../constants/postConstants";
 import { emojiIcon } from "../Home/SvgIcons";
 
@@ -73,7 +72,7 @@ const NewPost = ({ newPost, setNewPost }) => {
       setPostPreview("");
       setCaption("");
     }
-  }, [dispatch, error, success, navigate]);
+  }, [dispatch, error, success, navigate, setNewPost]);
 
   return (
     <Dialog open={newPost} onClose={() => setNewPost(false)} maxWidth="xl">

@@ -27,10 +27,10 @@ const Login = () => {
             toast.error(error);
             dispatch(clearErrors());
         }
-        if (isAuthenticated) {
+        if (isAuthenticated && user) {
             navigate(`/${user.username}`)
         }
-    }, [dispatch, error, isAuthenticated, navigate]);
+    }, [dispatch, error, isAuthenticated, navigate, user]);
 
 
     return (

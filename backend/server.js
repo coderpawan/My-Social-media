@@ -58,18 +58,34 @@ const io = require("socket.io")(server, {
 });
 
 let users = [];
+let activeChats = {}; // Track which chat each user is currently viewing
 
 const addUser = (userId, socketId) => {
-  !users.some((user) => user.userId === userId) &&
+  const existingUserIndex = users.findIndex((user) => user.userId === userId);
+  if (existingUserIndex !== -1) {
+    // Update socketId for existing user (handles reconnections)
+    users[existingUserIndex].socketId = socketId;
+  } else {
     users.push({ userId, socketId });
+  }
 };
 
 const removeUser = (socketId) => {
+  // Also remove from activeChats
+  const user = users.find((u) => u.socketId === socketId);
+  if (user) {
+    delete activeChats[user.userId];
+  }
   users = users.filter((user) => user.socketId !== socketId);
 };
 
 const getUser = (userId) => {
   return users.find((user) => user.userId === userId);
+};
+
+// Check if a user is currently viewing a specific chat
+const isUserInChat = (userId, chatId) => {
+  return activeChats[userId] === chatId;
 };
 
 io.on("connection", (socket) => {
@@ -82,14 +98,82 @@ io.on("connection", (socket) => {
     io.emit("getUsers", users);
   });
 
-  // get and send message
-  socket.on("sendMessage", ({ senderId, receiverId, content }) => {
-    const user = getUser(receiverId);
+  // User joins a chat (starts viewing it)
+  socket.on("joinChat", ({ userId, chatId, otherUserId }) => {
+    activeChats[userId] = chatId;
+    // Notify the other user that this user is now viewing the chat (messages are being read)
+    const otherUser = getUser(otherUserId);
+    if (otherUser) {
+      io.to(otherUser.socketId).emit("messagesRead", {
+        chatId,
+        readByUserId: userId
+      });
+    }
+  });
 
-    io.to(user?.socketId).emit("getMessage", {
+  // User leaves a chat (navigates away)
+  socket.on("leaveChat", ({ userId }) => {
+    delete activeChats[userId];
+  });
+
+  // get and send message
+  socket.on("sendMessage", ({ senderId, receiverId, content, chatId }) => {
+    const receiver = getUser(receiverId);
+    
+    // Check if receiver is currently viewing this chat
+    const isReceiverActive = isUserInChat(receiverId, chatId);
+
+    io.to(receiver?.socketId).emit("getMessage", {
       senderId,
       content,
+      chatId,
+      isReceiverActive, // Let receiver know if they should mark as read immediately
     });
+
+    // If receiver is active in this chat, notify sender that message was read instantly
+    if (isReceiverActive && receiver) {
+      const sender = getUser(senderId);
+      if (sender) {
+        io.to(sender.socketId).emit("messageReadInstantly", {
+          chatId,
+        });
+      }
+    }
+  });
+
+  // edit message - forward to receiver for real-time update
+  socket.on("editMessage", ({ messageId, content, receiverId }) => {
+    const user = getUser(receiverId);
+    if (user) {
+      io.to(user.socketId).emit("messageEdited", {
+        messageId,
+        content,
+      });
+    }
+  });
+
+  // delete message - forward to receiver for real-time update
+  socket.on("deleteMessage", ({ messageId, receiverId }) => {
+    const user = getUser(receiverId);
+    if (user) {
+      io.to(user.socketId).emit("messageDeleted", {
+        messageId,
+      });
+    }
+  });
+
+  // react to message - forward to receiver for real-time update
+  socket.on("reactToMessage", ({ messageId, emoji, userId, receiverId, chatId, reactions }) => {
+    const user = getUser(receiverId);
+    if (user) {
+      io.to(user.socketId).emit("messageReacted", {
+        messageId,
+        emoji,
+        userId,
+        chatId,
+        reactions
+      });
+    }
   });
 
   // typing states

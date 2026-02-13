@@ -120,7 +120,7 @@ const UpdateProfile = () => {
           </div>
         </div>
         <div className="flex w-full gap-8 text-right items-center">
-          <span className="w-1/4 font-semibold">Name</span>
+          <span className="w-1/4 font-semibold">Name<span className="text-red-500">*</span></span>
           <input
             className="border rounded p-1 w-3/4"
             type="text"
@@ -131,7 +131,7 @@ const UpdateProfile = () => {
           />
         </div>
         <div className="flex w-full gap-8 text-right items-center">
-          <span className="w-1/4 font-semibold">Username</span>
+          <span className="w-1/4 font-semibold">Username<span className="text-red-500">*</span></span>
           <input
             className="border rounded p-1 w-3/4"
             type="text"
@@ -149,11 +149,10 @@ const UpdateProfile = () => {
             placeholder="Website"
             value={website}
             onChange={(e) => setWebsite(e.target.value)}
-            required
           />
         </div>
         <div className="flex w-full gap-8 text-right items-start">
-          <span className="w-1/4 font-semibold">Bio</span>
+          <span className="w-1/4 font-semibold">Bio<span className="text-red-500">*</span></span>
           <textarea
             className="border rounded outline-none resize-none p-1 w-3/4"
             name="bio"
@@ -165,22 +164,22 @@ const UpdateProfile = () => {
           ></textarea>
         </div>
         <div className="flex w-full gap-8 text-right items-center">
-          <span className="w-1/4 font-semibold">Email</span>
+          <span className="w-1/4 font-semibold">Email<span className="text-red-500">*</span></span>
           <input
-            className="border rounded p-1 w-3/4"
+            className="border rounded p-1 w-3/4 bg-gray-100 cursor-not-allowed"
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            readOnly
+            disabled
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="bg-primary-blue font-medium rounded text-white py-2 w-40 mx-auto text-sm"
+          className="bg-primary-blue font-medium rounded text-white py-2 w-40 mx-auto text-sm disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          Submit
+          {loading ? "Updating..." : "Submit"}
         </button>
       </form>
     </>

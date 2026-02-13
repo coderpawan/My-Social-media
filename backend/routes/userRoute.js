@@ -14,6 +14,9 @@ const {
   searchUsers,
   getUserDetailsById,
   deleteProfile,
+  blockUser,
+  unblockUser,
+  getBlockedUsers,
 } = require("../controllers/userController");
 const { isAuthenticated } = require("../middlewares/auth");
 const upload = require("../middlewares/upload");
@@ -36,6 +39,10 @@ router.route("/users/suggested").get(isAuthenticated, getAllUsers);
 router.route("/users").get(isAuthenticated, searchUsers);
 
 router.route("/follow/:id").get(isAuthenticated, followUser);
+
+router.route("/block/:id").get(isAuthenticated, blockUser);
+router.route("/unblock/:id").get(isAuthenticated, unblockUser);
+router.route("/blocked").get(isAuthenticated, getBlockedUsers);
 
 router
   .route("/update/profile")

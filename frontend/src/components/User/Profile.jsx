@@ -7,7 +7,7 @@ import { clearErrors as clearChatErrors, addNewChat } from '../../actions/chatAc
 import { toast } from 'react-toastify';
 import BackdropLoader from '../Layouts/BackdropLoader';
 import { metaballsMenu, postsIconFill, postsIconOutline, reelsIcon, savedIconFill, savedIconOutline, settingsIcon, taggedIcon } from './SvgIcons';
-import { FOLLOW_USER_RESET, USER_DETAILS_RESET } from '../../constants/userConstants';
+import { FOLLOW_USER_RESET } from '../../constants/userConstants';
 import UsersDialog from '../Layouts/UsersDialog';
 import { NEW_CHAT_RESET } from '../../constants/chatConstants';
 import MetaData from '../Layouts/MetaData';
@@ -23,7 +23,6 @@ const Profile = () => {
     const [follow, setFollow] = useState(false);
     const [viewModal, setViewModal] = useState(false);
     const [followersModal, setFollowersModal] = useState(false);
-    const [usersArr, setUsersArr] = useState([]);
     const [savedTab, setSavedTab] = useState(false);
 
     const { user, error, loading } = useSelector((state) => state.userDetails);
@@ -39,13 +38,11 @@ const Profile = () => {
     const handleFollowersModal = () => {
         setFollowersModal(true);
         setViewModal(true)
-        setUsersArr(user?.followers);
     }
 
     const handleFollowingModal = () => {
         setViewModal(true)
         setFollowersModal(false);
-        setUsersArr(user?.following);
     }
 
     const closeModal = () => {
@@ -93,7 +90,7 @@ const Profile = () => {
             navigate(`/direct/t/${chat._id}/${friendId}`);
             dispatch({ type: NEW_CHAT_RESET });
         }
-    }, [dispatch, chatError, chat, navigate]);
+    }, [dispatch, chatError, chat, navigate, loggedInUser._id]);
 
     return (
         <>

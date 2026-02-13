@@ -1,5 +1,8 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { logoutUser } from '../../../actions/userAction'
+import { toast } from 'react-toastify'
 
 const tabs = [
     {
@@ -45,6 +48,14 @@ const tabs = [
 ]
 
 const Sidebar = ({ activeTab }) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        dispatch(logoutUser());
+        navigate("/login");
+        toast.success("Logout Successfully");
+    }
 
     return (
         <div className="hidden sm:flex flex-col border-r w-1/4">
@@ -58,6 +69,18 @@ const Sidebar = ({ activeTab }) => {
                 <span className="text-primary-blue font-medium">Accounts Center</span>
                 <p className="text-xs text-gray-400">Control settings for connected experiences across Instagram, the Facebook app and Messenger, including story and post sharing and logging in.</p>
             </div>
+
+            <button 
+                onClick={handleLogout} 
+                className="flex items-center justify-center gap-2 mx-4 mb-4 py-2.5 text-sm font-medium text-red-500 border border-red-500 rounded hover:bg-red-50 cursor-pointer"
+            >
+                <svg aria-label="Logout" height="16" width="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Logout
+            </button>
         </div>
     )
 }

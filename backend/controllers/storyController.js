@@ -253,6 +253,22 @@ exports.deleteStory = catchAsync(async (req, res, next) => {
     const resourceType = story.mediaType === "video" ? "video" : "image";
     await cloudinary.uploader.destroy(story.media.public_id, { resource_type: resourceType });
 
+    // Clean up highlights that contain this story
+    const user = await User.findById(req.user._id);
+    if (user.highlights && user.highlights.length > 0) {
+        // Filter out the deleted story from all highlights
+        // and remove highlights that become empty
+        user.highlights = user.highlights.filter(highlight => {
+            // Remove this story from the highlight
+            highlight.stories = highlight.stories.filter(
+                storyId => storyId.toString() !== req.params.storyId
+            );
+            // Keep the highlight only if it still has stories
+            return highlight.stories.length > 0;
+        });
+        await user.save();
+    }
+
     await story.deleteOne();
 
     res.status(200).json({
@@ -344,9 +360,20 @@ exports.getUserHighlights = catchAsync(async (req, res, next) => {
         return next(new ErrorHandler("User not found", 404));
     }
 
+    // Filter out highlights with no valid stories (stories may have been deleted)
+    const validHighlights = user.highlights.filter(
+        highlight => highlight.stories && highlight.stories.length > 0
+    );
+
+    // Clean up empty highlights from database if any were found
+    if (validHighlights.length !== user.highlights.length) {
+        user.highlights = validHighlights;
+        await user.save();
+    }
+
     res.status(200).json({
         success: true,
-        highlights: user.highlights
+        highlights: validHighlights
     });
 });
 
@@ -428,6 +455,19 @@ exports.getHighlightStories = catchAsync(async (req, res, next) => {
     const stories = await Story.find({ _id: { $in: highlight.stories } })
         .populate("user", "username avatar")
         .sort({ createdAt: 1 });
+
+    // If no valid stories exist, remove the highlight and return error
+    if (stories.length === 0) {
+        highlight.deleteOne();
+        await user.save();
+        return next(new ErrorHandler("Highlight no longer has any stories", 404));
+    }
+
+    // Update highlight if some stories were deleted (clean up orphan references)
+    if (stories.length !== highlight.stories.length) {
+        highlight.stories = stories.map(s => s._id);
+        await user.save();
+    }
 
     res.status(200).json({
         success: true,

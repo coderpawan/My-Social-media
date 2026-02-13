@@ -466,3 +466,94 @@ exports.searchUsers = catchAsync(async (req, res, next) => {
 //         });
 //     }
 // });
+
+// Block User
+exports.blockUser = catchAsync(async (req, res, next) => {
+    const userToBlock = await User.findById(req.params.id);
+    const loggedInUser = await User.findById(req.user._id);
+
+    if (!userToBlock) {
+        return next(new ErrorHandler("User Not Found", 404));
+    }
+
+    if (req.user._id.toString() === req.params.id) {
+        return next(new ErrorHandler("You cannot block yourself", 400));
+    }
+
+    // Check if already blocked
+    if (loggedInUser.blockedUsers.includes(userToBlock._id)) {
+        return res.status(200).json({
+            success: true,
+            message: "User is already blocked",
+        });
+    }
+
+    // Add to blocked users
+    loggedInUser.blockedUsers.push(userToBlock._id);
+
+    // Also unfollow the user if following
+    const followingIndex = loggedInUser.following.indexOf(userToBlock._id);
+    if (followingIndex !== -1) {
+        loggedInUser.following.splice(followingIndex, 1);
+        const followerIndex = userToBlock.followers.indexOf(loggedInUser._id);
+        if (followerIndex !== -1) {
+            userToBlock.followers.splice(followerIndex, 1);
+            await userToBlock.save();
+        }
+    }
+
+    // Remove from followers if they follow logged in user
+    const followerIndex = loggedInUser.followers.indexOf(userToBlock._id);
+    if (followerIndex !== -1) {
+        loggedInUser.followers.splice(followerIndex, 1);
+        const followingIdx = userToBlock.following.indexOf(loggedInUser._id);
+        if (followingIdx !== -1) {
+            userToBlock.following.splice(followingIdx, 1);
+            await userToBlock.save();
+        }
+    }
+
+    await loggedInUser.save();
+
+    res.status(200).json({
+        success: true,
+        message: "User blocked successfully",
+    });
+});
+
+// Unblock User
+exports.unblockUser = catchAsync(async (req, res, next) => {
+    const userToUnblock = await User.findById(req.params.id);
+    const loggedInUser = await User.findById(req.user._id);
+
+    if (!userToUnblock) {
+        return next(new ErrorHandler("User Not Found", 404));
+    }
+
+    const blockedIndex = loggedInUser.blockedUsers.indexOf(userToUnblock._id);
+    
+    if (blockedIndex === -1) {
+        return res.status(200).json({
+            success: true,
+            message: "User is not blocked",
+        });
+    }
+
+    loggedInUser.blockedUsers.splice(blockedIndex, 1);
+    await loggedInUser.save();
+
+    res.status(200).json({
+        success: true,
+        message: "User unblocked successfully",
+    });
+});
+
+// Get Blocked Users
+exports.getBlockedUsers = catchAsync(async (req, res, next) => {
+    const user = await User.findById(req.user._id).populate("blockedUsers", "name username avatar");
+
+    res.status(200).json({
+        success: true,
+        blockedUsers: user.blockedUsers,
+    });
+});

@@ -9,7 +9,7 @@ import ScrollToBottom from 'react-scroll-to-bottom';
 import axios from 'axios';
 import moment from 'moment';
 
-const PostItem = ({ _id, caption, likes, comments, image, postedBy, savedBy, createdAt, setUsersDialog, setUsersList }) => {
+const PostItem = ({ _id, caption, likes = [], comments = [], image, postedBy, savedBy = [], createdAt, setUsersDialog, setUsersList }) => {
 
     const dispatch = useDispatch();
     const commentInput = useRef(null);
@@ -69,11 +69,11 @@ const PostItem = ({ _id, caption, likes, comments, image, postedBy, savedBy, cre
 
     useEffect(() => {
         setLiked(allLikes.some((u) => u._id === user._id))
-    }, [allLikes]);
+    }, [allLikes, user._id]);
 
     useEffect(() => {
         setSaved(allSavedBy.some((id) => id === user._id))
-    }, [allSavedBy]);
+    }, [allSavedBy, user._id]);
 
 
     return (
@@ -81,15 +81,15 @@ const PostItem = ({ _id, caption, likes, comments, image, postedBy, savedBy, cre
 
             <div className="flex justify-between px-3 py-2.5 border-b items-center">
                 <div className="flex space-x-3 items-center">
-                    <Link to={`/${postedBy.username}`}><img draggable="false" className="w-10 h-10 rounded-full object-cover" src={postedBy.avatar.url} alt="avatar" /></Link>
-                    <Link to={`/${postedBy.username}`} className="text-black text-sm font-semibold">{postedBy.username}</Link>
+                    <Link to={`/${postedBy?.username}`}><img draggable="false" className="w-10 h-10 rounded-full object-cover" src={postedBy?.avatar?.url} alt="avatar" /></Link>
+                    <Link to={`/${postedBy?.username}`} className="text-black text-sm font-semibold">{postedBy?.username}</Link>
                 </div>
                 <span className="cursor-pointer">{moreIcons}</span>
             </div>
 
             {/* post image container */}
             <div className="relative flex items-center justify-center" onDoubleClick={setLike}>
-                <img draggable="false" loading="lazy" className="w-full h-full object-cover object-center" src={image.url} alt="post image" />
+                <img draggable="false" loading="lazy" className="w-full h-full object-cover object-center" src={image?.url} alt="post" />
                 {likeEffect &&
                     <img draggable="false" height="80px" className="likeEffect" alt="heart" src="https://img.icons8.com/ios-filled/2x/ffffff/like.png" />
                 }
@@ -113,7 +113,7 @@ const PostItem = ({ _id, caption, likes, comments, image, postedBy, savedBy, cre
 
                 {/* comment */}
                 <div className="flex flex-auto items-center space-x-1">
-                    <Link to={`/${postedBy.username}`} className="text-sm font-semibold hover:underline">{postedBy.username}</Link>
+                    <Link to={`/${postedBy?.username}`} className="text-sm font-semibold hover:underline">{postedBy?.username}</Link>
                     <span className="text-sm">{caption}</span>
                 </div>
 

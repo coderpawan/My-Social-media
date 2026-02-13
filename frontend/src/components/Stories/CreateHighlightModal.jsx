@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getArchivedStories, createHighlight, getUserHighlights } from "../../actions/storyAction";
 import { NEW_HIGHLIGHT_RESET } from "../../constants/storyConstants";
-import { XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { CheckIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 
 const CreateHighlightModal = ({ onClose, userId }) => {

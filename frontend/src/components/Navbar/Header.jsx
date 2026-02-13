@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   exploreOutline,
   homeFill,
   homeOutline,
-  likeFill,
   likeOutline,
   messageFill,
   messageOutline,
   postUploadOutline,
 } from "./SvgIcons";
 import { Link, useLocation } from "react-router-dom";
-import ProfileDetails from "./ProfileDetails";
 import NewPost from "./NewPost";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import SearchBox from "./SearchBar/SearchBox";
-import { ClickAwayListener } from "@mui/material";
+import { getAllChats } from "../../actions/chatAction";
+import { INCREMENT_CHAT_UNREAD } from "../../constants/chatConstants";
+import { SOCKET_ENDPOINT } from "../../utils/constants";
+import { io } from "socket.io-client";
 
 const Header = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
+  const { totalUnread } = useSelector((state) => state.allChats);
+  const socket = useRef(null);
 
-  const [profileToggle, setProfileToggle] = useState(false);
   const [newPost, setNewPost] = useState(false);
 
   const location = useLocation();
@@ -30,6 +33,42 @@ const Header = () => {
     setOnHome(location.pathname === "/");
     setOnChat(location.pathname.split("/").includes("direct"));
   }, [location]);
+
+  // Fetch initial chat data to get unread counts
+  useEffect(() => {
+    if (user?._id) {
+      dispatch(getAllChats());
+    }
+  }, [dispatch, user?._id]);
+
+  // Setup global socket listener for incoming messages (when not on chat page)
+  useEffect(() => {
+    if (user?._id) {
+      socket.current = io(SOCKET_ENDPOINT);
+      socket.current.emit("addUser", user._id);
+
+      socket.current.on("getMessage", (data) => {
+        // Only show unread notification if not viewing that chat
+        if (!onChat && data.chatId) {
+          dispatch({
+            type: INCREMENT_CHAT_UNREAD,
+            payload: {
+              chatId: data.chatId,
+              latestMessage: {
+                content: data.content,
+                sender: data.senderId,
+                createdAt: Date.now()
+              }
+            }
+          });
+        }
+      });
+
+      return () => {
+        socket.current.disconnect();
+      };
+    }
+  }, [user?._id, onChat, dispatch]);
 
   return (
     <nav className="fixed top-0 w-full border-b bg-white z-10">
@@ -50,11 +89,16 @@ const Header = () => {
         {/* <!-- icons container  --> */}
         <div className="flex items-center space-x-6 sm:mr-5">
           <Link to="/">
-            {profileToggle || !onHome ? homeOutline : homeFill}
+            {onHome ? homeFill : homeOutline}
           </Link>
 
-          <Link to="/direct/inbox">
+          <Link to="/direct/inbox" className="relative">
             {onChat ? messageFill : messageOutline}
+            {totalUnread > 0 && (
+              <span className="absolute -top-2 -right-2 flex items-center justify-center min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full px-1">
+                {totalUnread > 99 ? '99+' : totalUnread}
+              </span>
+            )}
           </Link>
 
           <div onClick={() => setNewPost(true)} className="cursor-pointer">
@@ -64,11 +108,10 @@ const Header = () => {
           <span className="hidden sm:block">{exploreOutline}</span>
           <span className="hidden sm:block">{likeOutline}</span>
 
-          <div
-            onClick={() => setProfileToggle(!profileToggle)}
+          <Link
+            to={`/${user.username}`}
             className={`${
-              (profileToggle && "border-black border") ||
-              (!onHome && !onChat && "border-black border")
+              !onHome && !onChat && "border-black border"
             } rounded-full cursor-pointer h-7 w-7 p-[0.5px]`}
           >
             <img
@@ -78,12 +121,8 @@ const Header = () => {
               src={user.avatar.url}
               alt=""
             />
-          </div>
+          </Link>
         </div>
-
-        {profileToggle && (
-          <ProfileDetails setProfileToggle={setProfileToggle} />
-        )}
 
         <NewPost newPost={newPost} setNewPost={setNewPost} />
       </div>

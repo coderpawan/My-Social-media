@@ -51,7 +51,7 @@ const PostContainer = ({ posts, id }) => {
             toast.success("Post Deleted")
             dispatch({ type: DELETE_POST_RESET });
         }
-    }, [dispatch, success, likeError, message, commentError, commentSuccess, saveError, saveSuccess, saveMessage, deleteError, deleteSuccess]);
+    }, [dispatch, success, likeError, message, commentError, commentSuccess, saveError, saveSuccess, saveMessage, deleteError, deleteSuccess, params.username]);
 
     return (
         <div className="grid grid-cols-3 gap-1 sm:gap-8 my-1 mb-8" id={id}>
