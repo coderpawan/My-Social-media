@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { editMessage, deleteMessageForMe, deleteMessageForEveryone, reactToMessage } from '../../actions/messageAction';
 import { ALL_MESSAGES_UPDATE, ALL_MESSAGES_DELETE, DELETE_MESSAGE_RESET, EDIT_MESSAGE_RESET } from '../../constants/messageConstants';
 import { UPDATE_CHAT_LATEST_MESSAGE } from '../../constants/chatConstants';
@@ -7,8 +8,9 @@ import { UPDATE_CHAT_LATEST_MESSAGE } from '../../constants/chatConstants';
 // Common emojis for reactions
 const REACTION_EMOJIS = ['❤️', '😂', '😮', '😢', '😡', '👍', '👎', '🔥', '👏', '🎉'];
 
-const Message = ({ ownMsg, avatar, content, messageId, chatId, socket, receiverId, mediaUrl, editedAt, reactions = [] }) => {
+const Message = ({ ownMsg, avatar, content, messageId, chatId, socket, receiverId, mediaUrl, editedAt, reactions = [], sharedPost }) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     
     const [showOptions, setShowOptions] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -98,6 +100,49 @@ const Message = ({ ownMsg, avatar, content, messageId, chatId, socket, receiverI
             );
         }
         return null;
+    }
+
+    // Render shared post
+    const renderSharedPost = () => {
+        if (!sharedPost) return null;
+        
+        return (
+            <div 
+                onClick={() => navigate(`/p/${sharedPost._id}`)}
+                className="cursor-pointer border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow max-w-[250px]"
+            >
+                {/* Post Header */}
+                <div className="flex items-center gap-2 p-2 border-b bg-gray-50">
+                    <img 
+                        src={sharedPost.postedBy?.avatar?.url} 
+                        alt="avatar" 
+                        className="w-6 h-6 rounded-full object-cover"
+                    />
+                    <span className="text-xs font-semibold">{sharedPost.postedBy?.username}</span>
+                </div>
+                
+                {/* Post Image */}
+                {sharedPost.image?.url && (
+                    <img 
+                        src={sharedPost.image.url} 
+                        alt="shared post" 
+                        className="w-full h-40 object-cover"
+                    />
+                )}
+                
+                {/* Post Caption */}
+                {sharedPost.caption && (
+                    <div className="p-2">
+                        <p className="text-xs text-gray-600 line-clamp-2">{sharedPost.caption}</p>
+                    </div>
+                )}
+                
+                {/* Tap to view hint */}
+                <div className="p-2 pt-0">
+                    <span className="text-xs text-primary-blue">Tap to view post</span>
+                </div>
+            </div>
+        );
     }
 
     // Handle emoji reaction with optimistic UI update
@@ -230,7 +275,7 @@ const Message = ({ ownMsg, avatar, content, messageId, chatId, socket, receiverI
                     <>
                         <div className="flex items-center gap-2">
                             {/* Options button (shows on hover) */}
-                            {showOptions && !isEditing && (
+                            {showOptions && !isEditing && !sharedPost && (
                                 <div className="relative flex items-center gap-1">
                                     <button 
                                         onClick={() => setShowReactionPicker(!showReactionPicker)}
@@ -253,11 +298,15 @@ const Message = ({ ownMsg, avatar, content, messageId, chatId, socket, receiverI
                                 </div>
                             )}
                             <div className="flex flex-col items-end">
-                                {renderMedia()}
-                                {content && content.trim() !== '' && (
-                                    <span className="text-sm text-white bg-violet-600 px-4 py-3 rounded-3xl max-w-xs">
-                                        {content}
-                                    </span>
+                                {sharedPost ? renderSharedPost() : (
+                                    <>
+                                        {renderMedia()}
+                                        {content && content.trim() !== '' && (
+                                            <span className="text-sm text-white bg-violet-600 px-4 py-3 rounded-3xl max-w-xs">
+                                                {content}
+                                            </span>
+                                        )}
+                                    </>
                                 )}
                                 {editedAt && (
                                     <span className="text-xs text-gray-400 mt-1">edited</span>
@@ -292,18 +341,22 @@ const Message = ({ ownMsg, avatar, content, messageId, chatId, socket, receiverI
                         <div className="flex items-end gap-2 max-w-xs">
                             <img draggable="false" className="w-7 h-7 rounded-full object-cover" src={avatar?.url} alt="avatar" />
                             <div className="flex flex-col">
-                                {renderMedia()}
-                                {content && content.trim() !== '' && (
-                                    <span className="px-4 py-3 text-sm bg-gray-200 rounded-3xl max-w-xs overflow-hidden">
-                                        {content}
-                                    </span>
+                                {sharedPost ? renderSharedPost() : (
+                                    <>
+                                        {renderMedia()}
+                                        {content && content.trim() !== '' && (
+                                            <span className="px-4 py-3 text-sm bg-gray-200 rounded-3xl max-w-xs overflow-hidden">
+                                                {content}
+                                            </span>
+                                        )}
+                                    </>
                                 )}
                                 {editedAt && (
                                     <span className="text-xs text-gray-400 mt-1">edited</span>
                                 )}
                             </div>
                             {/* Options for received messages */}
-                            {showOptions && (
+                            {showOptions && !sharedPost && (
                                 <div className="relative flex items-center gap-1">
                                     <button 
                                         onClick={() => setShowReactionPicker(!showReactionPicker)}

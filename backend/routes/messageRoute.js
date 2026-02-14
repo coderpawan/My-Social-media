@@ -1,11 +1,12 @@
 const express = require('express');
-const { newMessage, getMessages, editMessage, deleteMessageForMe, deleteMessageForEveryone, searchMessages, addReaction, removeReaction, markAsRead } = require('../controllers/messageController');
+const { newMessage, getMessages, editMessage, deleteMessageForMe, deleteMessageForEveryone, searchMessages, addReaction, removeReaction, markAsRead, sharePost } = require('../controllers/messageController');
 const { isAuthenticated } = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
 const router = express();
 
 router.route("/newMessage").post(isAuthenticated, upload.single('media'), newMessage);
+router.route("/sharePost").post(isAuthenticated, sharePost);
 router.route("/messages/:chatId").get(isAuthenticated, getMessages);
 router.route("/messages/read/:chatId").put(isAuthenticated, markAsRead);
 router.route("/message/edit").put(isAuthenticated, editMessage);

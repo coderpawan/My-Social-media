@@ -70,6 +70,7 @@ const Inbox = () => {
                 chatId: data.chatId,
                 isReceiverActive: data.isReceiverActive, // Track if we're active viewers
                 mediaUrl: data.mediaUrl, // Include media URL for image messages
+                sharedPost: data.sharedPost, // Include shared post data
             });
         });
         socket.current.on("typing", (senderId) => {

@@ -1,13 +1,14 @@
 const catchAsync = require("../middlewares/catchAsync");
 const Message = require("../models/messageModel");
 const Chat = require("../models/chatModel");
+const Post = require("../models/postModel");
 const cloudinary = require("cloudinary");
 const ErrorHandler = require("../utils/errorHandler");
 
 // Send New Message
 exports.newMessage = catchAsync(async (req, res, next) => {
 
-    const { chatId, content } = req.body;
+    const { chatId, content, sharedPostId } = req.body;
 
     const msgData = {
         sender: req.user._id,
@@ -18,6 +19,15 @@ exports.newMessage = catchAsync(async (req, res, next) => {
     // Only add content if it's not empty
     if (content && content.trim()) {
         msgData.content = content;
+    }
+
+    // Handle shared post
+    if (sharedPostId) {
+        const post = await Post.findById(sharedPostId);
+        if (!post) {
+            return next(new ErrorHandler("Post not found", 404));
+        }
+        msgData.sharedPost = sharedPostId;
     }
 
     // Handle media upload if present
@@ -36,12 +46,23 @@ exports.newMessage = catchAsync(async (req, res, next) => {
         };
     }
 
-    // Validate: either content or media must be present
-    if (!msgData.content && !msgData.mediaUrl) {
-        return next(new ErrorHandler("Message must have content or media", 400));
+    // Validate: either content, media, or shared post must be present
+    if (!msgData.content && !msgData.mediaUrl && !msgData.sharedPost) {
+        return next(new ErrorHandler("Message must have content, media, or shared post", 400));
     }
 
-    const newMessage = await Message.create(msgData);
+    let newMessage = await Message.create(msgData);
+    
+    // Populate shared post details
+    if (msgData.sharedPost) {
+        newMessage = await Message.findById(newMessage._id).populate({
+            path: 'sharedPost',
+            populate: {
+                path: 'postedBy',
+                select: 'username avatar'
+            }
+        });
+    }
 
     await Chat.findByIdAndUpdate(chatId, { latestMessage: newMessage, updatedAt: Date.now() });
 
@@ -70,6 +91,12 @@ exports.getMessages = catchAsync(async (req, res, next) => {
         chatId: req.params.chatId,
         deletedFor: { $ne: req.user._id },
         deletedForEveryone: { $ne: true }
+    }).populate({
+        path: 'sharedPost',
+        populate: {
+            path: 'postedBy',
+            select: 'username avatar'
+        }
     });
 
     res.status(200).json({
@@ -272,5 +299,55 @@ exports.removeReaction = catchAsync(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message,
+    });
+});
+
+// Share Post via Message
+exports.sharePost = catchAsync(async (req, res, next) => {
+    const { postId, receiverId } = req.body;
+
+    // Validate post exists
+    const post = await Post.findById(postId);
+    if (!post) {
+        return next(new ErrorHandler("Post not found", 404));
+    }
+
+    // Find or create chat with receiver
+    let chat = await Chat.findOne({
+        users: {
+            $all: [req.user._id, receiverId]
+        }
+    });
+
+    if (!chat) {
+        chat = await Chat.create({
+            users: [req.user._id, receiverId],
+        });
+    }
+
+    // Create message with shared post
+    let newMessage = await Message.create({
+        sender: req.user._id,
+        chatId: chat._id,
+        sharedPost: postId,
+        readBy: [req.user._id],
+    });
+
+    // Populate shared post details
+    newMessage = await Message.findById(newMessage._id).populate({
+        path: 'sharedPost',
+        populate: {
+            path: 'postedBy',
+            select: 'username avatar'
+        }
+    });
+
+    // Update chat's latest message
+    await Chat.findByIdAndUpdate(chat._id, { latestMessage: newMessage, updatedAt: Date.now() });
+
+    res.status(200).json({
+        success: true,
+        newMessage,
+        chatId: chat._id,
     });
 });

@@ -21,7 +21,11 @@ import {
     SEARCH_MESSAGES_REQUEST,
     SEARCH_MESSAGES_SUCCESS,
     SEARCH_MESSAGES_FAIL,
-    SEARCH_MESSAGES_RESET
+    SEARCH_MESSAGES_RESET,
+    SHARE_POST_REQUEST,
+    SHARE_POST_SUCCESS,
+    SHARE_POST_FAIL,
+    SHARE_POST_RESET
 } from "../constants/messageConstants";
 
 export const allMessagesReducer = (state = { messages: [] }, { type, payload }) => {
@@ -198,6 +202,43 @@ export const searchMessagesReducer = (state = { searchResults: [] }, { type, pay
             return {
                 ...state,
                 searchResults: [],
+            };
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null,
+            };
+        default:
+            return state;
+    }
+}
+
+export const sharePostReducer = (state = {}, { type, payload }) => {
+    switch (type) {
+        case SHARE_POST_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            };
+        case SHARE_POST_SUCCESS:
+            return {
+                loading: false,
+                success: true,
+                newMessage: payload.newMessage,
+                chatId: payload.chatId,
+            };
+        case SHARE_POST_FAIL:
+            return {
+                ...state,
+                loading: false,
+                error: payload,
+            };
+        case SHARE_POST_RESET:
+            return {
+                ...state,
+                success: false,
+                newMessage: null,
+                chatId: null,
             };
         case CLEAR_ERRORS:
             return {

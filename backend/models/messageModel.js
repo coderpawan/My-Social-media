@@ -19,6 +19,10 @@ const messageSchema = new mongoose.Schema(
             public_id: String,
             url: String
         },
+        sharedPost: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Post"
+        },
         deletedFor: [
             {
                 type: mongoose.Schema.Types.ObjectId,

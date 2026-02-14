@@ -8,8 +8,9 @@ import { Picker } from 'emoji-mart'
 import ScrollToBottom from 'react-scroll-to-bottom';
 import axios from 'axios';
 import moment from 'moment';
+import SharePostModal from './SharePostModal';
 
-const PostItem = ({ _id, caption, likes = [], comments = [], image, postedBy, savedBy = [], createdAt, setUsersDialog, setUsersList }) => {
+const PostItem = ({ _id, caption, likes = [], comments = [], image, postedBy, savedBy = [], createdAt, setUsersDialog, setUsersList, socket }) => {
 
     const dispatch = useDispatch();
     const commentInput = useRef(null);
@@ -26,6 +27,7 @@ const PostItem = ({ _id, caption, likes = [], comments = [], image, postedBy, sa
     const [comment, setComment] = useState("");
     const [viewComment, setViewComment] = useState(false);
     const [showEmojis, setShowEmojis] = useState(false);
+    const [showShareModal, setShowShareModal] = useState(false);
 
     const [likeEffect, setLikeEffect] = useState(false);
 
@@ -103,7 +105,7 @@ const PostItem = ({ _id, caption, likes = [], comments = [], image, postedBy, sa
                     <div className="flex space-x-4">
                         <button onClick={handleLike}>{liked ? likeFill : likeIconOutline}</button>
                         <button onClick={() => commentInput.current.focus()}>{commentIcon}</button>
-                        {shareIcon}
+                        <button onClick={() => setShowShareModal(true)}>{shareIcon}</button>
                     </div>
                     <button onClick={handleSave}>{saved ? saveIconFill : saveIconOutline}</button>
                 </div>
@@ -172,6 +174,14 @@ const PostItem = ({ _id, caption, likes = [], comments = [], image, postedBy, sa
                     placeholder="Add a comment..." />
                 <button type="submit" className={`${comment.trim().length < 1 ? 'text-blue-300' : 'text-primary-blue'} text-sm font-semibold`} disabled={comment.trim().length < 1}>Post</button>
             </form>
+
+            {/* Share Post Modal */}
+            <SharePostModal 
+                open={showShareModal} 
+                onClose={() => setShowShareModal(false)} 
+                postId={_id}
+                socket={socket}
+            />
 
         </div >
     )

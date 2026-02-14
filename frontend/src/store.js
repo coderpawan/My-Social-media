@@ -25,6 +25,7 @@ import {
   editMessageReducer,
   deleteMessageReducer,
   searchMessagesReducer,
+  sharePostReducer,
 } from "./reducers/messageReducer";
 import {
   storyFeedReducer,
@@ -62,6 +63,7 @@ const reducer = combineReducers({
   editMessage: editMessageReducer,
   deleteMessage: deleteMessageReducer,
   searchMessages: searchMessagesReducer,
+  sharePost: sharePostReducer,
   // Story reducers
   storyFeed: storyFeedReducer,
   userStories: userStoriesReducer,

@@ -18,7 +18,10 @@ import {
     SEARCH_MESSAGES_FAIL,
     REACT_MESSAGE_SUCCESS,
     REACT_MESSAGE_FAIL,
-    ALL_MESSAGES_UPDATE
+    ALL_MESSAGES_UPDATE,
+    SHARE_POST_REQUEST,
+    SHARE_POST_SUCCESS,
+    SHARE_POST_FAIL
 } from "../constants/messageConstants";
 
 // Get All Messages
@@ -227,6 +230,29 @@ export const reactToMessage = (messageId, emoji, userId) => async (dispatch, get
             type: REACT_MESSAGE_FAIL,
             payload: error.response?.data?.message || 'Failed to add reaction',
         });
+    }
+}
+
+// Share Post via Message
+export const sharePost = (postId, receiverId) => async (dispatch) => {
+    try {
+        dispatch({ type: SHARE_POST_REQUEST });
+        const config = { headers: { "Content-Type": "application/json" } }
+        const { data } = await axios.post('/api/v1/sharePost', { postId, receiverId }, config);
+
+        dispatch({
+            type: SHARE_POST_SUCCESS,
+            payload: data,
+        });
+
+        return data;
+
+    } catch (error) {
+        dispatch({
+            type: SHARE_POST_FAIL,
+            payload: error.response?.data?.message || 'Failed to share post',
+        });
+        throw error;
     }
 }
 

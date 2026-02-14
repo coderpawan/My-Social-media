@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { clearErrors, getPostsOfFollowing } from '../../actions/postAction'
@@ -9,10 +9,13 @@ import { StoryBar } from '../Stories'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import SpinLoader from '../Layouts/SpinLoader'
 import SkeletonPost from '../Layouts/SkeletonPost'
+import { io } from 'socket.io-client';
+import { SOCKET_ENDPOINT } from '../../utils/constants'
 
 const PostsContainer = () => {
 
     const dispatch = useDispatch();
+    const socket = useRef(null);
 
     const [usersList, setUsersList] = useState([]);
     const [usersDialog, setUsersDialog] = useState(false);
@@ -22,8 +25,19 @@ const PostsContainer = () => {
     const { error: likeError, message, success } = useSelector((state) => state.likePost)
     const { error: commentError, success: commentSuccess } = useSelector((state) => state.newComment)
     const { error: saveError, success: saveSuccess, message: saveMessage } = useSelector((state) => state.savePost)
+    const { user } = useSelector((state) => state.user)
 
     const handleClose = () => setUsersDialog(false);
+
+    // Initialize socket connection for sharing posts
+    useEffect(() => {
+        socket.current = io(SOCKET_ENDPOINT);
+        socket.current.emit("addUser", user._id);
+        
+        return () => {
+            socket.current?.disconnect();
+        };
+    }, [user._id]);
 
     useEffect(() => {
         if (error) {
@@ -83,7 +97,7 @@ const PostsContainer = () => {
                 >
                     <div className="w-full h-full mt-1 sm:mt-6 flex flex-col space-y-4">
                         {posts?.map((post) => (
-                            <PostItem key={post._id} {...post} setUsersDialog={setUsersDialog} setUsersList={setUsersList} />
+                            <PostItem key={post._id} {...post} setUsersDialog={setUsersDialog} setUsersList={setUsersList} socket={socket} />
                         ))}
                     </div>
                 </InfiniteScroll>

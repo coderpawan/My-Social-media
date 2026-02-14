@@ -109,17 +109,20 @@ io.on("connection", (socket) => {
   });
 
   // get and send message
-  socket.on("sendMessage", ({ senderId, receiverId, content, chatId }) => {
+  socket.on("sendMessage", ({ _id, senderId, receiverId, content, chatId, mediaUrl, sharedPost }) => {
     const receiver = getUser(receiverId);
     
     // Check if receiver is currently viewing this chat
     const isReceiverActive = isUserInChat(receiverId, chatId);
 
     io.to(receiver?.socketId).emit("getMessage", {
+      _id,
       senderId,
       content,
       chatId,
       isReceiverActive, // Let receiver know if they should mark as read immediately
+      mediaUrl,
+      sharedPost,
     });
 
     // If receiver is active in this chat, notify sender that message was read instantly

@@ -46,6 +46,12 @@ const ChatListItem = ({ _id, users, latestMessage, unreadCount = 0 }) => {
             }
         }
         
+        // Check if message has a shared post
+        if (latestMessage.sharedPost) {
+            const isOwnMessage = latestMessage.sender === user._id;
+            return isOwnMessage ? "Shared a post" : "Sent you a post";
+        }
+        
         // Check if message has media attachment
         if (latestMessage.mediaUrl && latestMessage.mediaUrl.url) {
             return "Sent an attachment";
