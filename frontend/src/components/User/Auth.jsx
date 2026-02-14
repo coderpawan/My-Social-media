@@ -1,30 +1,34 @@
 import React from 'react';
-import homepage from '../../assests/images/homepage.webp';
+import homepage from '../../assests/images/homepage.png';
 
 const Auth = ({ children }) => {
     return (
-        <div className="w-full h-full">
+        <div className="flex items-center justify-center w-full h-screen bg-gray-50 overflow-hidden">
 
-            <div className="flex w-full h-screen md:w-2/3 py-8 mx-auto">
-
-                <div className="hidden md:block bg-[url('https://www.instagram.com/static/images/homepage/phones/home-phones.png/1dc085cdb87d.png')] my-10 h-full bg-no-repeat">
-                    <img draggable="false" className="mr-[80px] mt-[1.8rem] ml-[155px]" src={homepage} alt="homepage" />
+            <div className="flex w-full max-w-4xl gap-8 items-center justify-center p-4">
+                <div 
+                    className="hidden md:block relative bg-no-repeat bg-cover"
+                    style={{
+                        backgroundImage: "url('https://www.instagram.com/static/images/homepage/phones/home-phones.png/1dc085cdb87d.png')",
+                        width: '460px', 
+                        height: '635px',
+                        backgroundPosition: '-46px 0'
+                    }}
+                >
+                    <img 
+                        draggable="false" 
+                        className="absolute top-[27px] right-[50px] h-[540px] w-[250px]"
+                        src={homepage} 
+                        alt="homepage" 
+                    />
                 </div>
-
-                <div className="flex flex-col gap-3 w-full md:w-2/5">
-
+                <div className="flex flex-col w-full max-w-[350px]">
                     {children}
-
-                    <p className="text-center text-sm my-2">Get the app.</p>
-                    <div className="flex gap-3 justify-center" >
-                        <img draggable="false" width="130px" src="https://www.instagram.com/static/images/appstore-install-badges/badge_ios_english-en.png/180ae7a0bcf7.png" alt="appstore" />
-                        <img draggable="false" width="130px" src="https://www.instagram.com/static/images/appstore-install-badges/badge_android_english-en.png/e9cd846dc748.png" alt="playstore" />
-                    </div>
-
                 </div>
+
             </div>
         </div>
     )
 }
 
-export default Auth
+export default Auth;

@@ -78,8 +78,8 @@ const Header = () => {
         <Link to="/">
           <img
             draggable="false"
-            className="hidden sm:block mt-1.5 w-full h-full object-contain"
-            src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
+            className="hidden sm:block mt-1.5 w-full h-1/2 object-contain"
+            src="/logo.jpg"
             alt=""
           />
         </Link>

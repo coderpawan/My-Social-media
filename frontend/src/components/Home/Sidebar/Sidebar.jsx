@@ -71,9 +71,6 @@ const Sidebar = ({ status }) => {
               <span className="text-gray-400 text-sm">{user.name}</span>
             </div>
           </div>
-          <span className="text-blue-500 text-xs font-semibold cursor-pointer">
-            Switch
-          </span>
         </div>
 
         {/* <!-- suggestions --> */}
@@ -93,36 +90,6 @@ const Sidebar = ({ status }) => {
                 .fill("")
                 .map((el, i) => <SkeletonUserItem key={i} />)
             : users?.map((user) => <UserListItem {...user} key={user._id} />)}
-        </div>
-
-        {/* <!-- sidebar footer container--> */}
-        <div className="flex flex-col mt-8 space-y-6 text-xs text-gray-400">
-          <div className="flex flex-col">
-            <div className="flex items-center space-x-1.5">
-              {[
-                "About",
-                "Help",
-                "Press",
-                "API",
-                "Jobs",
-                "Privacy",
-                "Terms",
-                "Locations",
-              ].map((el, i) => (
-                <span className="cursor-pointer hover:underline" key={i}>
-                  {el}
-                </span>
-              ))}
-            </div>
-            <div className="flex items-center space-x-1.5">
-              {["Top Accounts", "Hashtags", "Language"].map((el, i) => (
-                <span className="cursor-pointer hover:underline" key={i}>
-                  {el}
-                </span>
-              ))}
-            </div>
-          </div>
-          <span>&copy; {new Date().getFullYear()} INSTAGRAM FROM META</span>
         </div>
       </div>
     </div>

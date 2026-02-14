@@ -20,7 +20,7 @@ const UserListItem = ({ _id, username, avatar }) => {
                 <Link to={`/${username}`}><img draggable="false" className="w-9 h-9 rounded-full object-cover" src={avatar.url} alt="avatar" /></Link>
                 <div className="flex flex-col gap-0.5">
                     <Link to={`/${username}`} className="text-black text-sm font-semibold hover:underline">{username}</Link>
-                    <span className="text-gray-400 text-xs">New to Instagram</span>
+                    <span className="text-gray-400 text-xs">New to Socially</span>
                 </div>
             </div>
             <button onClick={handleFollow} className={`${follow ? 'text-red-500' : 'text-blue-500'} text-xs font-medium`}>{follow ? "Unfollow" : "Follow"}</button>
