@@ -16,7 +16,7 @@ const SharePostModal = ({ open, onClose, postId, socket }) => {
     const [sharing, setSharing] = useState(null);
 
     const { user: self } = useSelector((state) => state.user);
-    const { success, error, newMessage, chatId } = useSelector((state) => state.sharePost);
+    const { success, error } = useSelector((state) => state.sharePost);
 
     // Fetch following list
     const fetchFollowingUsers = useCallback(async () => {

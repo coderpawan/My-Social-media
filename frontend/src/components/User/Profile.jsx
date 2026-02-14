@@ -6,7 +6,7 @@ import { clearErrors, followUser, getUserDetails } from '../../actions/userActio
 import { clearErrors as clearChatErrors, addNewChat } from '../../actions/chatAction';
 import { toast } from 'react-toastify';
 import BackdropLoader from '../Layouts/BackdropLoader';
-import { metaballsMenu, postsIconFill, postsIconOutline, reelsIcon, savedIconFill, savedIconOutline, settingsIcon, taggedIcon } from './SvgIcons';
+import { metaballsMenu, postsIconFill, postsIconOutline, savedIconFill, savedIconOutline, settingsIcon } from './SvgIcons';
 import { FOLLOW_USER_RESET } from '../../constants/userConstants';
 import UsersDialog from '../Layouts/UsersDialog';
 import { NEW_CHAT_RESET } from '../../constants/chatConstants';

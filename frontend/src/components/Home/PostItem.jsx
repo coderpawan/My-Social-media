@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { addComment, likePost, savePost } from '../../actions/postAction';
 import { likeFill } from '../Navbar/SvgIcons';
-import { commentIcon, emojiIcon, likeIconOutline, moreIcons, saveIconFill, saveIconOutline, shareIcon } from './SvgIcons'
+import { commentIcon, emojiIcon, likeIconOutline, saveIconFill, saveIconOutline, shareIcon } from './SvgIcons'
 import { Picker } from 'emoji-mart'
 import ScrollToBottom from 'react-scroll-to-bottom';
 import axios from 'axios';

@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  exploreOutline,
   homeFill,
   homeOutline,
-  likeOutline,
   messageFill,
   messageOutline,
   postUploadOutline,
