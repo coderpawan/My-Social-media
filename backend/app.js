@@ -1,6 +1,7 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const errorMiddleware = require("./middlewares/error");
+const connectDB = require("./utils/connectDB");
 
 const app = express();
 
@@ -8,6 +9,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use("/public", express.static("public"));
+
+// Ensure database connection before handling API requests
+app.use("/api", async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("Database connection error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed. Please try again.",
+    });
+  }
+});
 
 // import routes
 const post = require("./routes/postRoute");

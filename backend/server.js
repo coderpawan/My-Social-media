@@ -2,24 +2,15 @@ const path = require("path");
 const express = require("express");
 const app = require("./app");
 require("dotenv").config();
-const mongoose = require("mongoose");
+const connectDB = require("./utils/connectDB");
 const PORT = process.env.PORT || 4000;
 const multer = require("multer");
 const cloudinary = require("cloudinary");
 
-const mongodbUri = process.env.MONGO_URI;
-
-mongoose
-  .connect(mongodbUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Mongoose Connected");
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+// Initialize database connection (for non-serverless environments)
+connectDB().catch((error) => {
+  console.error("Initial database connection error:", error);
+});
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
