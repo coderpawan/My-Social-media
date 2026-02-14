@@ -47,7 +47,7 @@ const Sidebar = ({ status }) => {
     <div
       className={`fixed lg:right-32 bg-white ${
         status ? "" : "hidden"
-      } xl:right-48 border-[1px] border-slate-200  sm:w-3/12 h-full lg:flex flex-col flex-auto mt-0 m-8 sm:mt-6 pr-8 -z-1`}
+      } xl:right-40 border-[1px] border-slate-200  sm:w-3/12 h-full lg:flex flex-col flex-auto mt-0 m-8 sm:mt-6 pr-8 -z-1`}
     >
       <div className="ml-10 flex flex-col p-2">
         {/* <!-- self profile card --> */}

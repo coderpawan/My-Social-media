@@ -86,7 +86,6 @@ const PostItem = ({ _id, caption, likes = [], comments = [], image, postedBy, sa
                     <Link to={`/${postedBy?.username}`}><img draggable="false" className="w-10 h-10 rounded-full object-cover" src={postedBy?.avatar?.url} alt="avatar" /></Link>
                     <Link to={`/${postedBy?.username}`} className="text-black text-sm font-semibold">{postedBy?.username}</Link>
                 </div>
-                <span className="cursor-pointer">{moreIcons}</span>
             </div>
 
             {/* post image container */}

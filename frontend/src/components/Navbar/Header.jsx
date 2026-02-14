@@ -87,7 +87,7 @@ const Header = () => {
         <SearchBox />
 
         {/* <!-- icons container  --> */}
-        <div className="flex items-center space-x-6 sm:mr-5">
+        <div className="flex items-center space-x-6 sm:mr-5 ml-0 sm:ml-20">
           <Link to="/">
             {onHome ? homeFill : homeOutline}
           </Link>
@@ -104,9 +104,6 @@ const Header = () => {
           <div onClick={() => setNewPost(true)} className="cursor-pointer">
             {postUploadOutline}
           </div>
-
-          <span className="hidden sm:block">{exploreOutline}</span>
-          <span className="hidden sm:block">{likeOutline}</span>
 
           <Link
             to={`/${user.username}`}
