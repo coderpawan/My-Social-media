@@ -1,5 +1,6 @@
-export const SOCKET_ENDPOINT = "http://localhost:4000";
-// export const SOCKET_ENDPOINT = "https://instagrammern.herokuapp.com";
+export const SOCKET_ENDPOINT = window.location.hostname === "localhost"
+  ? "http://localhost:4000" 
+  : "https://socially4u.vercel.app/";
 
 export const stories = [
   {
