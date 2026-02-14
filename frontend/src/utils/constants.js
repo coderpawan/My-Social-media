@@ -1,6 +1,6 @@
 export const SOCKET_ENDPOINT = window.location.hostname === "localhost"
   ? "http://localhost:4000" 
-  : "https://socially4u.vercel.app";
+  : "https://socially-u07q.onrender.com";
 
 export const stories = [
   {
