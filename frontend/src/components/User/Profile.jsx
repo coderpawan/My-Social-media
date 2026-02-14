@@ -3,7 +3,7 @@ import PostContainer from './Posts/PostContainer';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { clearErrors, followUser, getUserDetails } from '../../actions/userAction';
-import { clearErrors as clearChatErrors } from '../../actions/chatAction';
+import { clearErrors as clearChatErrors, addNewChat } from '../../actions/chatAction';
 import { toast } from 'react-toastify';
 import BackdropLoader from '../Layouts/BackdropLoader';
 import { metaballsMenu, postsIconFill, postsIconOutline, savedIconFill, savedIconOutline, settingsIcon } from './SvgIcons';
@@ -76,6 +76,10 @@ const Profile = () => {
         setFollow(user?.followers?.some((u) => u._id === loggedInUser._id))
     }, [user, loggedInUser._id]);
 
+    const addToChat = () => {
+        dispatch(addNewChat(user._id));
+    }
+
     useEffect(() => {
         if (chatError) {
             toast.error(chatError);
@@ -117,7 +121,7 @@ const Profile = () => {
                                     <div className="flex gap-3 items-center">
                                         {follow ? (
                                             <>
-                                                {/* <button onClick={addToChat} className="border rounded px-2.5 py-[0.3rem] text-sm font-medium hover:bg-gray-100">Message</button> */}
+                                                <button onClick={addToChat} className="border rounded px-2.5 py-[0.3rem] text-sm font-medium hover:bg-gray-100">Message</button>
                                                 <button onClick={handleFollow} className="font-medium text-sm bg-red-50 rounded py-1.5 px-3 text-red-600 hover:bg-red-100 hover:text-red-700">Unfollow</button>
                                             </>
                                         ) : (
