@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { clearErrors, getAllChats } from '../../actions/chatAction';
 import ChatListItem from './ChatListItem';
 
-const Sidebar = ({ openModal }) => {
+const Sidebar = ({ openModal, userId }) => {
 
     const dispatch = useDispatch();
     const params = useParams();
@@ -23,7 +23,7 @@ const Sidebar = ({ openModal }) => {
 
     return (
         <>
-            <div className="hidden sm:flex flex-col h-full w-2/6 border-r">
+            <div className={`${userId ? 'hidden sm:flex' : 'flex'} flex-col h-full w-full sm:w-2/6 border-r`}>
 
                 <div className="flex items-center justify-between border-b p-4">
                     <span className="mx-auto font-medium cursor-pointer">{user.username}</span>

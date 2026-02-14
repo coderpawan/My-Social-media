@@ -41,10 +41,10 @@ const SearchBox = () => {
 
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
-      <div className="flex items-center border-[1px] border-slate-200 sm:border-none gap-3 pl-4 sm:ml-36 w-44 mr-4 sm:mr-0 sm:w-64 py-2 bg-[#efefef] rounded-lg relative">
+      <div className="flex items-center border-[1px] border-slate-200 sm:border-none gap-3 pl-4 sm:ml-36 w-44 mr-4 sm:mr-0 sm:w-64 py-2 bg-[#efefef] rounded-lg relative overflow-hidden">
         {!searching && searchIcon}
         <input
-          className="bg-transparent text-sm border-none outline-none flex-1 pr-3"
+          className="bg-transparent text-sm border-none outline-none flex-1 pr-3 min-w-0"
           type="search"
           value={searchTerm}
           onFocus={handleFocus}

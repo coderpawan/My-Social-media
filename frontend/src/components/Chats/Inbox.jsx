@@ -429,10 +429,10 @@ const Inbox = () => {
                 <div className="flex border h-full rounded w-full bg-white">
 
                     {/* sidebar */}
-                    <Sidebar openModal={openModal} />
+                    <Sidebar openModal={openModal} userId={userId} />
 
                     {!userId ?
-                        <div className="flex flex-col items-center justify-center w-full sm:w-4/6 gap-2">
+                        <div className="hidden sm:flex flex-col items-center justify-center w-full sm:w-4/6 gap-2">
                             <div className="w-24 h-24 flex items-center p-2 justify-center border-2 border-black rounded-full">
                                 <img draggable="false" loading="lazy" className="w-full h-full rotate-12 object-contain" src="https://static.thenounproject.com/png/172101-200.png" alt="message" />
                             </div>
@@ -446,6 +446,15 @@ const Inbox = () => {
                             {/* header */}
                             <div className="flex py-3 px-6 border-b items-center justify-between">
                                 <div className="flex gap-2 items-center">
+                                    {/* Back button - visible only on mobile */}
+                                    <button 
+                                        onClick={() => navigate('/direct/inbox')} 
+                                        className="sm:hidden p-1 mr-2 hover:bg-gray-100 rounded-full"
+                                    >
+                                        <svg aria-label="Back" color="#262626" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24">
+                                            <path d="M21 11H6.414l5.293-5.293-1.414-1.414L2.586 12l7.707 7.707 1.414-1.414L6.414 13H21z"></path>
+                                        </svg>
+                                    </button>
                                     <div className="w-8 h-8 relative">
                                         <img draggable="false" loading="lazy" className="w-full h-full rounded-full object-cover" src={friend.avatar?.url} alt="avatar" />
                                         {isOnline && <div className="absolute -right-0.5 -bottom-0.5 h-3 w-3 bg-green-500 rounded-full"></div>}
