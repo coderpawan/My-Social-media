@@ -52,6 +52,7 @@ const NewDialog = ({ open, onClose }) => {
             navigate(`/direct/t/${chat._id}/${friendId}`);
             dispatch({ type: NEW_CHAT_RESET });
             onClose();
+            window.location.reload();
         }
     }, [dispatch, error, chat, navigate, self._id, onClose]);
 
