@@ -7,12 +7,12 @@ const router = express();
 
 router.route("/newMessage").post(isAuthenticated, upload.single('media'), newMessage);
 router.route("/sharePost").post(isAuthenticated, sharePost);
+router.route("/messages/search").get(isAuthenticated, searchMessages);
 router.route("/messages/:chatId").get(isAuthenticated, getMessages);
 router.route("/messages/read/:chatId").put(isAuthenticated, markAsRead);
 router.route("/message/edit").put(isAuthenticated, editMessage);
 router.route("/message/deleteForMe/:messageId").delete(isAuthenticated, deleteMessageForMe);
 router.route("/message/deleteForEveryone/:messageId").delete(isAuthenticated, deleteMessageForEveryone);
-router.route("/messages/search").get(isAuthenticated, searchMessages);
 router.route("/message/react").post(isAuthenticated, addReaction);
 router.route("/message/react/:messageId").delete(isAuthenticated, removeReaction);
 
