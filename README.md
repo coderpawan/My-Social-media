@@ -159,32 +159,21 @@ A modern, full-stack social media application built with the MERN stack featurin
 Create a `.env` file in the `backend` directory with the following variables:
 
 ```env
-# Server
 PORT=4000
-NODE_ENV=development
+MONGO_URI="Your MongoDB URL"
 
-# Database
-MONGO_URI=your_mongodb_connection_string
+JWT_SECRET="Your secret key"
+JWT_EXPIRE="7d"
+COOKIE_EXPIRE=5
 
-# JWT
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRE=7d
-COOKIE_EXPIRE=7
+CLOUDINARY_NAME="your cloudinary account name"
+CLOUDINARY_API_KEY="your cloudinary api key"
+CLOUDINARY_API_SECRET="take it from the account"
 
-# Cloudinary
-CLOUDINARY_NAME=your_cloudinary_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+NODE_ENV="production"
 
-# Email (Gmail)
-SMTP_SERVICE=gmail
-SMTP_MAIL=your_email@gmail.com
-SMTP_PASSWORD=your_app_password
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=465
-
-# Frontend URL (for password reset links)
-FRONTEND_URL=http://localhost:3000
+SMTP_EMAIL="your email id"
+SMTP_PASSWORD="16 digit email account security key"
 ```
 
 ---
