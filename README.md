@@ -2,6 +2,8 @@
 
 <div align="center">
 
+https://github.com/user-attachments/assets/4a453e71-2baa-4749-82f4-14743cffd09f
+
 ![Socially](https://img.shields.io/badge/Socially-Social%20Media%20App-blueviolet?style=for-the-badge)
 
 A modern, full-stack social media application built with the MERN stack featuring real-time messaging, stories, and more.
