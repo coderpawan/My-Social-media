@@ -29,8 +29,6 @@ A modern, full-stack social media application built with the MERN stack featurin
 - [Project Structure](#project-structure)
 - [API Endpoints](#api-endpoints)
 - [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
 - [Contact](#contact)
 
 ---
