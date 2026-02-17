@@ -17,22 +17,6 @@ A modern, full-stack social media application built with the MERN stack featurin
 
 ---
 
-## 📋 Table of Contents
-
-- [About](#about)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Environment Variables](#environment-variables)
-- [Project Structure](#project-structure)
-- [API Endpoints](#api-endpoints)
-- [Screenshots](#screenshots)
-- [Contact](#contact)
-
----
-
 ## 🎯 About
 
 **Socially** is a feature-rich social media platform that enables users to connect, share moments, and communicate in real-time. Built with modern web technologies, it offers a seamless Instagram-like experience with posts, stories, direct messaging, and more.
